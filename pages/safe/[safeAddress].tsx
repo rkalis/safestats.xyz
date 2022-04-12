@@ -98,7 +98,7 @@ const SafeDashboard = () => {
       <h2 className="p-4 text-2xl">
         <AddressDisplay address={address} /> ({threshold} of {currentSigners.length})
       </h2>
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <CountTable title="Transactions Signed" counts={signerCounts} currentSigners={currentSigners} />
         <CountTable title="Transactions Executed" counts={executorCounts} currentSigners={currentSigners} />
       </div>

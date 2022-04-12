@@ -8,3 +8,7 @@ export async function lookupEnsName(address?: string, provider?: providers.Provi
     return undefined
   }
 }
+
+export function shortenAddress(address?: string): string | undefined {
+  return address && `${address.substr(0, 6)}...${address.substr(address.length - 4, 4)}`
+}
