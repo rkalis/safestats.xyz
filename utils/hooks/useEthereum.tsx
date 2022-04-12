@@ -72,7 +72,7 @@ export const EthereumProvider = ({ children }: Props) => {
       } else {
         try {
           // Use a default provider with a free Infura key if web3 is not available
-          const newProvider = new providers.InfuraProvider('mainnet', `${'88583771d63544aa'}${'ba1006382275c6f8'}`)
+          const newProvider = new providers.InfuraProvider('mainnet', `${'125a1545497b4194'}${'923d92251bb85ddd'}`)
 
           // Check that the provider is available (and not rate-limited) by sending a dummy request
           await newProvider.getCode('0x1f9840a85d5af5bf1d1762f925bdaddc4201f984', 'latest')

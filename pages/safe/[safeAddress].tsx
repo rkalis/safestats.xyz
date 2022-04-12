@@ -79,9 +79,12 @@ const SafeDashboard = () => {
       {loading ? (
         <ClipLoader />
       ) : (
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <CountTable title="Transactions Signed" counts={signerCounts} currentSigners={currentSigners} />
-          <CountTable title="Transactions Executed" counts={executorCounts} currentSigners={currentSigners} />
+        <div className="flex flex-col">
+          <div className="text-center text-lg">{parsedTransactions.length} transactions executed</div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <CountTable title="Transactions Signed" counts={signerCounts} currentSigners={currentSigners} />
+            <CountTable title="Transactions Executed" counts={executorCounts} currentSigners={currentSigners} />
+          </div>
         </div>
       )}
     </div>
