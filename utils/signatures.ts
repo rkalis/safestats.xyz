@@ -11,7 +11,6 @@ export const recoverAddress = (dataHashStr: string, signature: string) => {
 
   // For contract signatures and approved hashes, the address is encoded in "r"
   if (unadjustedV === '00' || unadjustedV === '01') {
-    console.log(unadjustedV, v, utils.hexDataSlice(r, 12))
     return utils.getAddress(utils.hexDataSlice(r, 12))
   }
 

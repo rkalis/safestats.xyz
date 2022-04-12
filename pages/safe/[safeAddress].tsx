@@ -84,6 +84,12 @@ const SafeDashboard = () => {
       defaultCounts
     )
 
+  if (!provider) {
+    return (
+      <div>SafeStats.xyz requires MetaMask to be installed.</div>
+    )
+  }
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="p-4 text-2xl">
