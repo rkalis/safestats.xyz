@@ -1,10 +1,10 @@
-import { Contract, providers, utils } from "ethers";
+import { Contract, providers, utils } from 'ethers'
 import GnosisSafe from 'utils/abis/GnosisSafe.json'
 
 // This code was inspired by the "checkNSignatures" function in the Gnosis Safe contract
 export const recoverAddress = (dataHashStr: string, signature: string) => {
-  const dataHash = utils.arrayify(dataHashStr);
-  const { v, r, s } = utils.splitSignature(signature);
+  const dataHash = utils.arrayify(dataHashStr)
+  const { v, r, s } = utils.splitSignature(signature)
 
   // Ethers adjusts the "v" when it is 1 or 0
   const unadjustedV = signature.slice(-2)
@@ -23,10 +23,17 @@ export const recoverAddress = (dataHashStr: string, signature: string) => {
   return utils.recoverAddress(dataHash, { v, r, s })
 }
 
-export const getExecTransactionSigners = async (transaction: any, nonce: number, provider: providers.JsonRpcProvider) => {
-  const iface = new utils.Interface(GnosisSafe);
+export const getExecTransactionSigners = async (
+  transaction: any,
+  nonce: number,
+  provider: providers.JsonRpcProvider
+) => {
+  const iface = new utils.Interface(GnosisSafe)
   const decodedData = iface.decodeFunctionData('execTransaction', transaction.input)
-  const signatures = decodedData.signatures.slice(2).match(/.{1,130}/g).map((sig: string) => `0x${sig}`)
+  const signatures = decodedData.signatures
+    .slice(2)
+    .match(/.{1,130}/g)
+    .map((sig: string) => `0x${sig}`)
 
   const contract = new Contract(transaction.to, iface, provider)
 
@@ -42,18 +49,18 @@ export const getExecTransactionSigners = async (transaction: any, nonce: number,
         decodedData.gasPrice,
         decodedData.gasToken,
         decodedData.refundReceiver,
-        nonce,
+        nonce
       )
 
       return recoverAddress(dataHash, sig)
     })
-  );
+  )
 
   return signers
 }
 
 export const getExecTransactionData = async (transaction: any, nonce: number, provider: providers.JsonRpcProvider) => {
-  const executor = utils.getAddress(transaction.from);
+  const executor = utils.getAddress(transaction.from)
   const signers = await getExecTransactionSigners(transaction, nonce, provider)
   return { executor, signers, transaction }
 }

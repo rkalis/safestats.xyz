@@ -1,7 +1,7 @@
-import AddressDisplay from "./AddressDisplay";
+import AddressDisplay from './AddressDisplay'
 
 interface Props {
-  title: string;
+  title: string
   counts: { [index: string]: number }
   currentSigners: string[]
 }
@@ -9,9 +9,7 @@ interface Props {
 export const CountTable = ({ title, counts, currentSigners }: Props) => {
   return (
     <div>
-      <h2 className="text-xl p-2">
-        {title}
-      </h2>
+      <h2 className="p-2 text-xl">{title}</h2>
       <table className="table-auto border-collapse text-left">
         <thead>
           <tr>
@@ -20,15 +18,18 @@ export const CountTable = ({ title, counts, currentSigners }: Props) => {
           </tr>
         </thead>
         <tbody>
-
-        {Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([signer, count]) => (
-          <tr key={signer}>
-            <td className={`border p-1 decoration-red-500 ${currentSigners.includes(signer) ? '' : 'line-through'}`}>
-              <AddressDisplay address={signer} />
-            </td>
-            <td className="border p-1">{count}</td>
-          </tr>
-        ))}
+          {Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([signer, count]) => (
+              <tr key={signer}>
+                <td
+                  className={`border p-1 decoration-red-500 ${currentSigners.includes(signer) ? '' : 'line-through'}`}
+                >
+                  <AddressDisplay address={signer} />
+                </td>
+                <td className="border p-1">{count}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

@@ -1,6 +1,6 @@
-import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers';
-import { chains } from 'eth-chains';
-import { providers, utils } from 'ethers';
+import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
+import { chains } from 'eth-chains'
+import { providers, utils } from 'ethers'
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
 
 // THIS FILE WAS COPIED FROM REVOKE.CASH FOR EASE OF USE
@@ -11,37 +11,37 @@ declare let window: {
 }
 
 interface EthereumContext {
-  provider?: JsonRpcProvider;
-  signer?: JsonRpcSigner;
-  account?: string;
-  ensName?: string;
-  chainId?: number;
-  chainName?: string;
-  connect?: () => Promise<void>;
+  provider?: JsonRpcProvider
+  signer?: JsonRpcSigner
+  account?: string
+  ensName?: string
+  chainId?: number
+  chainName?: string
+  connect?: () => Promise<void>
 }
 
-const EthereumContext = React.createContext<EthereumContext>({});
+const EthereumContext = React.createContext<EthereumContext>({})
 
 interface Props {
-  children: ReactNode;
+  children: ReactNode
 }
 
 // Note: accounts are converted to lowercase -> getAddress'ed everywhere, because different chains (like RSK)
 // may have other checksums so we normalise it to ETH checksum
 export const EthereumProvider = ({ children }: Props) => {
-  const [provider, setProvider] = useState<JsonRpcProvider>();
-  const [chainId, setChainId] = useState<number>();
-  const [chainName, setChainName] = useState<string>();
-  const [account, setAccount] = useState<string>();
-  const [signer, setSigner] = useState<JsonRpcSigner>();
+  const [provider, setProvider] = useState<JsonRpcProvider>()
+  const [chainId, setChainId] = useState<number>()
+  const [chainName, setChainName] = useState<string>()
+  const [account, setAccount] = useState<string>()
+  const [signer, setSigner] = useState<JsonRpcSigner>()
 
   useEffect(() => {
-    const newChainName = chains.get(chainId ?? '')?.name ?? `Network with chainId ${chainId}`;
-    if (newChainName) setChainName(newChainName);
+    const newChainName = chains.get(chainId ?? '')?.name ?? `Network with chainId ${chainId}`
+    if (newChainName) setChainName(newChainName)
   }, [chainId])
 
   useEffect(() => {
-    setSigner(provider?.getSigner(account));
+    setSigner(provider?.getSigner(account))
   }, [account])
 
   const updateAccount = (newAccount?: string) => {
@@ -58,7 +58,7 @@ export const EthereumProvider = ({ children }: Props) => {
   useEffect(() => {
     const updateProvider = async (newProvider: providers.JsonRpcProvider) => {
       const { chainId: newChainId } = await newProvider.getNetwork()
-      const newAccount = await getConnectedAccount(newProvider);
+      const newAccount = await getConnectedAccount(newProvider)
       setProvider(newProvider)
       setChainId(newChainId)
       updateAccount(newAccount)
@@ -84,13 +84,13 @@ export const EthereumProvider = ({ children }: Props) => {
       }
 
       window.ethereum?.on('accountsChanged', (accounts: string[]) => {
-        console.log('accounts changed to', accounts);
-        updateAccount(accounts[0]);
+        console.log('accounts changed to', accounts)
+        updateAccount(accounts[0])
       })
 
       window.ethereum?.on('chainChanged', (chainIdHex: string) => {
         const chainIdDec = Number.parseInt(chainIdHex, 16)
-        console.log('chain changed to', chainIdDec);
+        console.log('chain changed to', chainIdDec)
         setChainId(chainIdDec)
       })
     }
@@ -99,21 +99,20 @@ export const EthereumProvider = ({ children }: Props) => {
   }, [])
 
   return (
-    <EthereumContext.Provider value={{ provider, chainId, chainName, account, signer, connect }} >
+    <EthereumContext.Provider value={{ provider, chainId, chainName, account, signer, connect }}>
       {children}
     </EthereumContext.Provider>
-  );
+  )
 }
 
 const getConnectedAccount = async (provider: providers.JsonRpcProvider) => {
   try {
-    return await provider?.getSigner().getAddress();
+    return await provider?.getSigner().getAddress()
   } catch (e) {
-    return undefined;
+    return undefined
   }
 }
 
 export const useEthereum = () => {
-  return useContext(EthereumContext);
+  return useContext(EthereumContext)
 }
-
