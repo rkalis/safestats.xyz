@@ -7,6 +7,7 @@ import axios from 'axios';
 import { getExecTransactionData } from "utils/signatures";
 import { CountTable } from "components/CountTable";
 import AddressDisplay from "components/AddressDisplay";
+import { useAsync } from "react-async-hook";
 
 interface ParsedTransaction {
   executor: string
@@ -19,29 +20,25 @@ const SafeDashboard = () => {
   const address = router.query.safeAddress as string
 
   const { provider } = useEthereum();
-  const [parsedTransactions, setParsedTransactions] = useState<ParsedTransaction[]>([]);
+  const { result: parsedTransactions = [] } = useAsync(() => loadStats(), [provider]);
 
-  useEffect(() => {
-    const init = async () => {
-      if (!provider) return;
+  const loadStats = async () => {
+    if (!provider) return;
 
-      const iface = new utils.Interface(GnosisSafe);
-      const res = await axios.get(`https://api.etherscan.com/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`)
-      const transactions = res.data.result
+    const iface = new utils.Interface(GnosisSafe);
+    const res = await axios.get(`https://api.etherscan.com/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`)
+    const transactions = res.data.result
 
-      const execTransactions = transactions?.filter((tx: any) => (
-        tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction'))) && tx.to === address
-      );
+    const execTransactions = transactions?.filter((tx: any) => (
+      tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction'))) && tx.to === address
+    );
 
-      const parsedTransactions = await Promise.all(
-        execTransactions?.map(async (tx: any, nonce: number) => getExecTransactionData(tx, nonce, provider))
-      );
+    const parsedTransactions = await Promise.all(
+      execTransactions?.map(async (tx: any, nonce: number) => getExecTransactionData(tx, nonce, provider))
+    );
 
-      setParsedTransactions(parsedTransactions)
-    }
-
-    init();
-  }, [provider])
+    return parsedTransactions
+  }
 
   const signerCounts = parsedTransactions
     .flatMap((tx) => tx.signers)
