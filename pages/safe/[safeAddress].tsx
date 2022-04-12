@@ -95,9 +95,9 @@ const SafeDashboard = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="p-4 text-2xl">
+      <h2 className="p-4 text-2xl">
         <AddressDisplay address={address} /> ({threshold} of {currentSigners.length})
-      </h1>
+      </h2>
       <div className="flex gap-2">
         <CountTable title="Transactions Signed" counts={signerCounts} currentSigners={currentSigners} />
         <CountTable title="Transactions Executed" counts={executorCounts} currentSigners={currentSigners} />

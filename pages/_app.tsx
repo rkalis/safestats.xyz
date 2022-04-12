@@ -2,6 +2,8 @@ import '../styles/globals.css'
 import { NextSeo } from 'next-seo'
 import type { AppProps } from 'next/app'
 import { EthereumProvider } from '../utils/hooks/useEthereum'
+import Footer from 'components/Footer'
+import Header from 'components/Header'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -36,18 +38,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       />
       <EthereumProvider>
         <div>
+          <Header />
           <Component {...pageProps} />
-          <div className="p-4 text-center decoration-red-500">
-            Created by{' '}
-            <a href="https://twitter.com/RoscoKalis" className="underline">
-              Rosco Kalis
-            </a>{' '}
-            (
-            <a href="https://github.com/rkalis/safestats.xyz" className="underline">
-              Source code
-            </a>
-            )
-          </div>
+          <Footer />
         </div>
       </EthereumProvider>
     </>
