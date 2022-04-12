@@ -27,7 +27,7 @@ export const CountTable = ({ title, counts, currentSigners }: Props) => {
                 >
                   <AddressDisplay address={signer} />
                 </td>
-                <td className="border p-1">{count}</td>
+                <td className="border p-1 text-right">{count}</td>
               </tr>
             ))}
         </tbody>
