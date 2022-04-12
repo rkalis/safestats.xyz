@@ -9,6 +9,7 @@ import { CountTable } from 'components/CountTable'
 import AddressDisplay from 'components/AddressDisplay'
 import { useAsync } from 'react-async-hook'
 import { ADDRESS_REGEX } from 'utils/constants'
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 interface ParsedTransaction {
   executor: string
@@ -21,10 +22,13 @@ const SafeDashboard = () => {
   const router = useRouter()
   const address = router.query.safeAddress as string
 
-  const { provider } = useEthereum()
+  const { provider } = useEthereum() || new WalletConnectProvider({
+      infuraId: "27e484dcd9e3efcfd25a83a78777cdf1",
+    });
   const { result: parsedTransactions = [] } = useAsync(() => loadTransactions(), [provider])
   const { result: currentSigners = [] } = useAsync(() => loadSigners(), [provider])
   const { result: threshold = 0 } = useAsync(() => loadThreshold(), [provider])
+  console.log(provider)
 
   const loadTransactions = async () => {
     if (!provider) return

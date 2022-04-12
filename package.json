@@ -7,6 +7,7 @@
     "lint": "next lint && prettier -w ."
   },
   "dependencies": {
+    "@walletconnect/web3-provider": "^1.7.7",
     "axios": "^0.26.1",
     "eth-chains": "^0.4.0",
     "ethers": "^5.6.2",
