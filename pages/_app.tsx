@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app'
 import { EthereumProvider } from '../utils/hooks/useEthereum'
 import Footer from 'components/Footer'
 import Header from 'components/Header'
+import Script from 'next/script'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -43,6 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Footer />
         </div>
       </EthereumProvider>
+      <Script async defer src="https://scripts.simpleanalyticscdn.com/latest.js" />
     </>
   )
 }
