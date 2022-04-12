@@ -72,9 +72,8 @@ export const loadTransactions = async (address: string, provider?: providers.Jso
   const iface = new utils.Interface(GnosisSafe)
 
   const transactions = await pRetry(() => getAddressTransactions(address), { retries: 5 })
-
   const execTransactions = transactions?.filter(
-    (tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction')) && tx.to === address
+    (tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction'))
   )
 
   const parsedTransactions = await Promise.all(
