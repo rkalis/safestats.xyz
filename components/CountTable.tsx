@@ -1,3 +1,5 @@
+import AddressDisplay from "./AddressDisplay";
+
 interface Props {
   title: string;
   counts: { [index: string]: number }
@@ -20,7 +22,7 @@ export const CountTable = ({ title, counts }: Props) => {
 
         {Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([signer, count]) => (
           <tr>
-            <td className="border p-1">{signer}</td>
+            <td className="border p-1"><AddressDisplay address={signer} /></td>
             <td className="border p-1">{count}</td>
           </tr>
         ))}

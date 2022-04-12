@@ -6,6 +6,7 @@ import { utils } from "ethers";
 import axios from 'axios';
 import { getExecTransactionData } from "utils/signatures";
 import { CountTable } from "components/CountTable";
+import AddressDisplay from "components/AddressDisplay";
 
 interface ParsedTransaction {
   executor: string
@@ -15,7 +16,7 @@ interface ParsedTransaction {
 
 const SafeDashboard = () => {
   const router = useRouter()
-  const address = router.query.safeAddress!
+  const address = router.query.safeAddress as string
 
   const { provider } = useEthereum();
   const [parsedTransactions, setParsedTransactions] = useState<ParsedTransaction[]>([]);
@@ -58,7 +59,7 @@ const SafeDashboard = () => {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
-      <h1 className="text-2xl p-4">{address}</h1>
+      <h1 className="text-2xl p-4"><AddressDisplay address={address} /></h1>
       <div className="flex gap-2">
         <CountTable title="Transactions Signed" counts={signerCounts} />
         <CountTable title="Transactions Executed" counts={executorCounts} />
