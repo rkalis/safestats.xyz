@@ -3066,6 +3066,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-seo@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "next-seo@npm:5.4.0"
+  peerDependencies:
+    next: ^8.1.1-canary.54 || >=9.0.0
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: fe19b4f7237111d6e8c2f3e9128946480f1b6e2d7ffab5902e8a4a1114721142daa187175334fa7d6da25605658e63cd8c6e3a68a9d9678fd7fbd4fb4b061391
+  languageName: node
+  linkType: hard
+
 next@latest:
   version: 12.1.4
   resolution: "next@npm:12.1.4"
@@ -3771,6 +3782,7 @@ next@latest:
     eth-chains: ^0.4.0
     ethers: ^5.6.2
     next: latest
+    next-seo: ^5.4.0
     postcss: ^8.4.5
     prettier: ^2.5.1
     prettier-plugin-tailwindcss: ^0.1.1
