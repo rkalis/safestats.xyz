@@ -8,6 +8,7 @@ import { getExecTransactionData } from 'utils/signatures'
 import { CountTable } from 'components/CountTable'
 import AddressDisplay from 'components/AddressDisplay'
 import { useAsync } from 'react-async-hook'
+import { ADDRESS_REGEX } from 'utils/constants'
 
 interface ParsedTransaction {
   executor: string
@@ -85,9 +86,11 @@ const SafeDashboard = () => {
     )
 
   if (!provider) {
-    return (
-      <div>SafeStats.xyz requires MetaMask to be installed.</div>
-    )
+    return <div className="text-center">SafeStats.xyz requires MetaMask to be installed.</div>
+  }
+
+  if (!ADDRESS_REGEX.test(address)) {
+    return <div className="text-center">Incorrect address.</div>
   }
 
   return (
