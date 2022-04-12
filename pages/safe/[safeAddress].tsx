@@ -55,7 +55,7 @@ const SafeDashboard = () => {
     }), {})
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col justify-center items-center">
       <h1 className="text-2xl p-4"><AddressDisplay address={address} /></h1>
       <div className="flex gap-2">
         <CountTable title="Transactions Signed" counts={signerCounts} />
