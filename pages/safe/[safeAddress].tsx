@@ -1,20 +1,13 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 import { useEthereum } from 'utils/hooks/useEthereum'
 import GnosisSafe from 'utils/abis/GnosisSafe.json'
 import { Contract, utils } from 'ethers'
-import axios from 'axios'
-import { getExecTransactionData } from 'utils/signatures'
+import { loadTransactions } from 'utils/transactions'
 import { CountTable } from 'components/CountTable'
 import AddressDisplay from 'components/AddressDisplay'
 import { useAsync } from 'react-async-hook'
 import { ADDRESS_REGEX } from 'utils/constants'
-
-interface ParsedTransaction {
-  executor: string
-  signers: string[]
-  transaction: any
-}
+import ClipLoader from 'react-spinners/ClipLoader'
 
 const SafeDashboard = () => {
   const iface = new utils.Interface(GnosisSafe)
@@ -22,28 +15,9 @@ const SafeDashboard = () => {
   const address = router.query.safeAddress as string
 
   const { provider } = useEthereum()
-  const { result: parsedTransactions = [] } = useAsync(() => loadTransactions(), [provider])
+  const { result: parsedTransactions = [], loading, error } = useAsync(loadTransactions, [address, provider])
   const { result: currentSigners = [] } = useAsync(() => loadSigners(), [provider])
   const { result: threshold = 0 } = useAsync(() => loadThreshold(), [provider])
-
-  const loadTransactions = async () => {
-    if (!provider) return
-
-    const res = await axios.get(
-      `https://api.etherscan.com/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`
-    )
-    const transactions = res.data.result
-
-    const execTransactions = transactions?.filter(
-      (tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction')) && tx.to === address
-    )
-
-    const parsedTransactions = await Promise.all(
-      execTransactions?.map(async (tx: any, nonce: number) => getExecTransactionData(tx, nonce, provider))
-    )
-
-    return parsedTransactions
-  }
 
   const loadSigners = async () => {
     if (!provider) return
@@ -93,15 +67,23 @@ const SafeDashboard = () => {
     return <div className="text-center">Incorrect address.</div>
   }
 
+  if (error) {
+    return <div className="text-center">An error occurred: {error.message}.</div>
+  }
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h2 className="p-4 text-2xl">
         <AddressDisplay address={address} /> ({threshold} of {currentSigners.length})
       </h2>
-      <div className="flex flex-col sm:flex-row gap-2">
-        <CountTable title="Transactions Signed" counts={signerCounts} currentSigners={currentSigners} />
-        <CountTable title="Transactions Executed" counts={executorCounts} currentSigners={currentSigners} />
-      </div>
+      {loading ? (
+        <ClipLoader />
+      ) : (
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <CountTable title="Transactions Signed" counts={signerCounts} currentSigners={currentSigners} />
+          <CountTable title="Transactions Executed" counts={executorCounts} currentSigners={currentSigners} />
+        </div>
+      )}
     </div>
   )
 }

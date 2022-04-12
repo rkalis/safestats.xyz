@@ -9,7 +9,7 @@ interface Props {
 export const CountTable = ({ title, counts, currentSigners }: Props) => {
   return (
     <div>
-      <h3 className="sm:p-2 text-xl">{title}</h3>
+      <h3 className="text-xl sm:p-2">{title}</h3>
       <table className="table-auto border-collapse text-left">
         <thead>
           <tr>

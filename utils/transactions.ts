@@ -1,3 +1,5 @@
+import axios from 'axios'
+import pRetry from 'p-retry'
 import { Contract, providers, utils } from 'ethers'
 import GnosisSafe from 'utils/abis/GnosisSafe.json'
 
@@ -62,4 +64,34 @@ export const getExecTransactionData = async (transaction: any, nonce: number, pr
   const executor = utils.getAddress(transaction.from)
   const signers = await getExecTransactionSigners(transaction, nonce, provider)
   return { executor, signers, transaction }
+}
+
+export const loadTransactions = async (address: string, provider?: providers.JsonRpcProvider) => {
+  if (!provider) return
+
+  const iface = new utils.Interface(GnosisSafe)
+
+  const transactions = await pRetry(() => getAddressTransactions(address), { retries: 5 })
+
+  const execTransactions = transactions?.filter(
+    (tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction')) && tx.to === address
+  )
+
+  const parsedTransactions = await Promise.all(
+    execTransactions?.map(async (tx: any, nonce: number) => getExecTransactionData(tx, nonce, provider))
+  )
+
+  return parsedTransactions
+}
+
+const getAddressTransactions = async (address: string) => {
+  const res = await axios.get(
+    `https://api.etherscan.com/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`
+  )
+
+  if (res.data.message === 'NOTOK') {
+    throw new Error(`Etherscan API returned an error: ${res.data.result}`)
+  }
+
+  return res.data.result
 }
