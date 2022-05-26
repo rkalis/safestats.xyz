@@ -72,12 +72,13 @@ export const loadTransactions = async (address: string, provider?: providers.Jso
   const iface = new utils.Interface(GnosisSafe)
 
   const transactions = await pRetry(() => getAddressTransactions(address), { retries: 5 })
-  const execTransactions = transactions?.filter(
-    (tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction'))
-  )
+  // Filter all successful 'execTransaction' calls
+  const execTransactions = (transactions ?? [])
+    .filter((tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction')))
+    .filter((tx: any) => tx.txreceipt_status === '1')
 
   const parsedTransactions = await Promise.all(
-    execTransactions?.map(async (tx: any, nonce: number) => getExecTransactionData(tx, nonce, provider))
+    execTransactions.map(async (tx: any, nonce: number) => getExecTransactionData(tx, nonce, provider))
   )
 
   return parsedTransactions
