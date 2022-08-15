@@ -14,8 +14,8 @@ const SafeDashboard = () => {
   const router = useRouter()
   const address = router.query.safeAddress as string
 
-  const { provider } = useEthereum()
-  const { result: parsedTransactions = [], loading, error } = useAsync(loadTransactions, [address, provider])
+  const { provider, chainId } = useEthereum()
+  const { result: parsedTransactions = [], loading, error } = useAsync(loadTransactions, [address, provider, chainId])
   const { result: currentSigners = [] } = useAsync(() => loadSigners(), [provider])
   const { result: threshold = 0 } = useAsync(() => loadThreshold(), [provider])
 
