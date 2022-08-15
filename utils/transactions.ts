@@ -66,12 +66,12 @@ export const getExecTransactionData = async (transaction: any, nonce: number, pr
   return { executor, signers, transaction }
 }
 
-export const loadTransactions = async (address: string, provider?: providers.JsonRpcProvider) => {
+export const loadTransactions = async (address: string, provider?: providers.JsonRpcProvider, chainId?: number) => {
   if (!provider) return
 
   const iface = new utils.Interface(GnosisSafe)
 
-  const transactions = await pRetry(() => getAddressTransactions(address), { retries: 5 })
+  const transactions = await pRetry(() => getAddressTransactions(address, chainId), { retries: 5 })
   // Filter all successful 'execTransaction' calls
   const execTransactions = (transactions ?? [])
     .filter((tx: any) => tx.input.slice(0, 10) == iface.getSighash(iface.getFunction('execTransaction')))
@@ -84,9 +84,19 @@ export const loadTransactions = async (address: string, provider?: providers.Jso
   return parsedTransactions
 }
 
-const getAddressTransactions = async (address: string) => {
+const getAddressTransactions = async (address: string, chainId?: number) => {
+  let explorerBaseURL = 'api.etherscan.com'
+  switch (chainId) {
+    case 137:
+      explorerBaseURL = 'api.polygonscan.com'
+      break
+    case 42220:
+      explorerBaseURL = 'api.celoscan.io'
+      break
+  }
+
   const res = await axios.get(
-    `https://api.etherscan.com/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`
+    `https://${explorerBaseURL}/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`
   )
 
   if (res.data.message === 'NOTOK') {
