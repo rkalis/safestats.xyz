@@ -93,6 +93,9 @@ const getAddressTransactions = async (address: string, chainId?: number) => {
     case 42220:
       explorerBaseURL = 'api.celoscan.io'
       break
+    case 42161:
+      explorerBaseURL = 'api.arbiscan.io'
+      break
   }
 
   const res = await axios.get(
