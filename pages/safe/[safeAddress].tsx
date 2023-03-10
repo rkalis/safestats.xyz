@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEthereum } from 'utils/hooks/useEthereum'
 import GnosisSafe from 'utils/abis/GnosisSafe.json'
 import { Contract, utils } from 'ethers'
-import { loadTransactions } from 'utils/transactions'
+import { loadPastSigners, loadTransactions } from 'utils/transactions'
 import { CountTable } from 'components/CountTable'
 import AddressDisplay from 'components/AddressDisplay'
 import { useAsync } from 'react-async-hook'
@@ -16,8 +16,11 @@ const SafeDashboard = () => {
 
   const { provider, chainId } = useEthereum()
   const { result: parsedTransactions = [], loading, error } = useAsync(loadTransactions, [address, provider, chainId])
-  const { result: currentSigners = [] } = useAsync(() => loadSigners(), [provider])
-  const { result: threshold = 0 } = useAsync(() => loadThreshold(), [provider])
+  const { result: currentSigners = [] } = useAsync(() => loadSigners(), [address, provider, chainId])
+  const { result: pastSigners = [] } = useAsync(loadPastSigners, [address, provider, chainId])
+  const { result: threshold = 0 } = useAsync(() => loadThreshold(), [address, provider, chainId])
+
+  const pastOrCurrentSigners = [...Array.from(new Set([...currentSigners, ...pastSigners]))]
 
   const loadSigners = async () => {
     if (!provider) return
@@ -50,7 +53,7 @@ const SafeDashboard = () => {
     )
 
   const executorCounts = parsedTransactions
-    .map((tx) => tx.executor)
+    .map((tx) => (pastOrCurrentSigners.includes(tx.executor) ? tx.executor : 'Non-Signer'))
     .reduce<{ [executor: string]: number }>(
       (counts, executor) => ({
         ...counts,
