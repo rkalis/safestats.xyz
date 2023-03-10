@@ -2,6 +2,8 @@ import axios from 'axios'
 import pRetry from 'p-retry'
 import { Contract, providers, utils } from 'ethers'
 import GnosisSafe from 'utils/abis/GnosisSafe.json'
+import { ChainId } from 'eth-chains'
+import { SUPPORTED_CHAINS } from './constants'
 
 // This code was inspired by the "checkNSignatures" function in the Gnosis Safe contract
 export const recoverAddress = (dataHashStr: string, signature: string) => {
@@ -85,21 +87,10 @@ export const loadTransactions = async (address: string, provider?: providers.Jso
 }
 
 const getAddressTransactions = async (address: string, chainId?: number) => {
-  let explorerBaseURL = 'api.etherscan.com'
-  switch (chainId) {
-    case 137:
-      explorerBaseURL = 'api.polygonscan.com'
-      break
-    case 42220:
-      explorerBaseURL = 'api.celoscan.io'
-      break
-    case 42161:
-      explorerBaseURL = 'api.arbiscan.io'
-      break
-  }
+  const apiUrl = getChainApiUrl(chainId ?? ChainId.EthereumMainnet);
 
   const res = await axios.get(
-    `https://${explorerBaseURL}/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`
+    `${apiUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&apikey=YourApiKeyToken`
   )
 
   if (res.data.message === 'NOTOK') {
@@ -108,3 +99,22 @@ const getAddressTransactions = async (address: string, chainId?: number) => {
 
   return res.data.result
 }
+
+
+export const getChainApiUrl = (chainId: number): string | undefined => {
+  if (!SUPPORTED_CHAINS.includes(chainId)) return undefined;
+
+  const apiUrls: { [key in typeof SUPPORTED_CHAINS[number]]: string } = {
+    [ChainId.EthereumMainnet]: 'https://api.etherscan.io/api',
+    [ChainId.PolygonMainnet]: 'https://api.polygonscan.com/api',
+    [ChainId.BinanceSmartChainMainnet]: 'https://api.bscscan.com/api',
+    [ChainId.ArbitrumOne]: 'https://api.arbiscan.io/api',
+    [ChainId.AuroraMainnet]: 'https://explorer.aurora.dev/api',
+    [ChainId['AvalancheC-Chain']]: 'https://api.snowtrace.io/api',
+    [ChainId.Optimism]: 'https://api.optimistic.etherscan.io/api',
+    [ChainId.Goerli]: 'https://api-goerli.etherscan.io/api',
+    [ChainId.CeloMainnet]: 'https://api.celoscan.io/api',
+  };
+
+  return apiUrls[chainId as typeof SUPPORTED_CHAINS[number]];
+};

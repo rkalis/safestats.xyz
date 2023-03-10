@@ -7,8 +7,8 @@ const Home = () => {
       <AddressInput />
       <div>
         Or try{' '}
-        <Link href="/safe/0x15d0f64ffcf91c39810529f805cc3595dc3ef83f">
-          <a className="underline decoration-red-500">0x15d0f64ffcf91c39810529f805cc3595dc3ef83f</a>
+        <Link href="/safe/0x15d0f64ffcf91c39810529f805cc3595dc3ef83f" className='underline decoration-red-500'>
+          0x15d0f64ffcf91c39810529f805cc3595dc3ef83f
         </Link>
       </div>
     </div>

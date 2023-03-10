@@ -8,15 +8,15 @@
   },
   "dependencies": {
     "axios": "^0.26.1",
-    "eth-chains": "^0.4.0",
+    "eth-chains": "^1.0.0",
     "ethers": "^5.6.2",
-    "next": "latest",
-    "next-seo": "^5.4.0",
+    "next": "^13.2.4",
+    "next-seo": "^5.15.0",
     "p-retry": "^4.1.0",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-async-hook": "^4.0.0",
-    "react-dom": "^17.0.2",
-    "react-spinners": "^0.11.0"
+    "react-dom": "^18.2.0",
+    "react-spinners": "^0.13.8"
   },
   "devDependencies": {
     "@types/node": "17.0.4",
